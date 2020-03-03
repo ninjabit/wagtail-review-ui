@@ -84,15 +84,13 @@ export interface CommentProps {
 
 export default class CommentComponent extends React.Component<CommentProps> {
     renderHeader(): React.ReactFragment {
-        let { comment, store, api, user } = this.props;
-        let title, date, resolved;
+        let { comment, store, api } = this.props;
+        let date, resolved;
 
         if (comment.mode == 'creating') {
-            title = 'New comment';
             date = '';
             resolved = <></>;
         } else {
-            title = comment.author ? comment.author.name : user.name;
             date = dateFormat(comment.date, 'h:MM mmmm d');
 
             let toggleResolved = async (e: React.MouseEvent) => {
@@ -139,7 +137,6 @@ export default class CommentComponent extends React.Component<CommentProps> {
         return (
             <div className="comment__header">
                 <div className="comment__header-info">
-                    <h2>{title}</h2>
                     <p className="comment__date">{date}</p>
                 </div>
                 {resolved}
@@ -212,8 +209,18 @@ export default class CommentComponent extends React.Component<CommentProps> {
         if (!hideNewReply && comment.isFocused && comment.newReply.length > 0) {
             replyActions = (
                 <div className="comment__reply-actions">
-                    <button onClick={onClickSendReply}>Send Reply</button>
-                    <button onClick={onClickCancelReply}>Cancel</button>
+                    <button
+                        onClick={onClickSendReply}
+                        className="comment__button comment__button--primary"
+                    >
+                        Reply
+                    </button>
+                    <button
+                        onClick={onClickCancelReply}
+                        className="comment__button"
+                    >
+                        Cancel
+                    </button>
                 </div>
             );
         }
@@ -223,7 +230,7 @@ export default class CommentComponent extends React.Component<CommentProps> {
             replyTextarea = (
                 <textarea
                     className="comment__reply-input"
-                    placeholder="Write a comment back"
+                    placeholder="Enter your reply..."
                     value={comment.newReply}
                     onChange={onChangeNewReply}
                     style={{ resize: 'none' }}
@@ -270,16 +277,23 @@ export default class CommentComponent extends React.Component<CommentProps> {
 
         return (
             <>
-                {this.renderHeader()}
                 <textarea
                     className="comment__input"
                     value={comment.text}
                     onChange={onChangeText}
                     style={{ resize: 'none' }}
+                    placeholder="Enter your comments..."
                 />
-                <div className="comment__edit-actions">
-                    <button onClick={onSave}>Add Comment</button>
-                    <button onClick={onCancel}>Cancel</button>
+                <div>
+                    <button
+                        onClick={onSave}
+                        className="comment__button comment__button--primary"
+                    >
+                        Save
+                    </button>
+                    <button onClick={onCancel} className="comment__button">
+                        Cancel
+                    </button>
                 </div>
             </>
         );
@@ -324,9 +338,16 @@ export default class CommentComponent extends React.Component<CommentProps> {
                     onChange={onChangeText}
                     style={{ resize: 'none' }}
                 />
-                <div className="comment__edit-actions">
-                    <button onClick={onSave}>Save</button>
-                    <button onClick={onCancel}>Cancel</button>
+                <div>
+                    <button
+                        onClick={onSave}
+                        className="comment__button comment__button--primary"
+                    >
+                        Save
+                    </button>
+                    <button onClick={onCancel} className="comment__button">
+                        Cancel
+                    </button>
                 </div>
                 {this.renderReplies({ hideNewReply: true })}
             </>
@@ -480,20 +501,22 @@ export default class CommentComponent extends React.Component<CommentProps> {
             this.props.user.id === comment.author.id
         ) {
             actions = (
-                <div className="comment__actions">
-                    <a href="#" onClick={onClickEdit}>
+                <div>
+                    <button
+                        className="comment__button comment__button--primary"
+                        onClick={onClickEdit}
+                    >
                         Edit
-                    </a>
-                    <a href="#" onClick={onClickDelete}>
+                    </button>
+                    <button className="comment__button" onClick={onClickDelete}>
                         Delete
-                    </a>
+                    </button>
                 </div>
             );
         }
 
         return (
             <>
-                {this.renderHeader()}
                 <p className="comment__text">{comment.text}</p>
                 {actions}
                 {this.renderReplies()}
